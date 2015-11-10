@@ -230,6 +230,7 @@ int main(int argc, char **argv)
     int seq = 0,acknum = 0,rcv_base = 0,trash_int = 0,hehe;
     
     while(1){
+        printf("wobufu!\n");
         recvlen = recvfrom(fd, tcp_packet, 20+BUFSIZE, 0, (struct sockaddr *)&serv_addr, &addrlen);
         len = parse_packet(tcp_packet, &seq, &acknum, &flag, &checksum);
         if (len==-1)
