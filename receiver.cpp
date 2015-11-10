@@ -230,7 +230,6 @@ int main(int argc, char **argv)
     int seq = 0,acknum = 0,rcv_base = 0,trash_int = 0,hehe;
     
     while(1){
-        printf("wobufu!\n");
         recvlen = recvfrom(fd, tcp_packet, 20+BUFSIZE, 0, (struct sockaddr *)&serv_addr, &addrlen);
         len = parse_packet(tcp_packet, &seq, &acknum, &flag, &checksum);
         if (len==-1)
@@ -247,8 +246,9 @@ int main(int argc, char **argv)
         }
         if (seq==rcv_base) {
             totalbyte += 20+len;
+            string tmp = "len is "+std::to_string(len)+"\n";
+            fwrite(tmp.c_str(), 1, tmp.size(), logfs);
             //std::cout<<"len is "<<len<<"\n";
-            printf("len is %d\n",len );
             //std::cout<<"Write seq # "<<seq<<" with len = "<<len<<"\n";
             fwrite(tcp_packet+20, 1, len, ofs);
             
@@ -258,7 +258,8 @@ int main(int argc, char **argv)
             for(int i = 0; i<ws; i++){
                 if (out_order_buf[i].first == target){
                     int len_t = parse_packet(out_order_buf[i].second, &hehe, &trash_int, &trash_short, &trash_short);
-                    printf("len is %d\n",len_t );
+                    tmp = "len is "+std::to_string(len_t)+"\n";
+                    fwrite(tmp.c_str(), 1, tmp.size(), logfs);
                     fwrite( (out_order_buf[i].second)+ 20, 1, len_t, ofs);
                     totalbyte += 20+len_t;
                     rcv_base++;
