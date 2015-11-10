@@ -122,8 +122,8 @@ int parse_packet(byte *tcp_packet,int *seq,int *acknum,short *flag,short *checks
     //memcpy(&tmp, tcp_packet+16, sizeof(short));
     tmp = ch_sum(tcp_packet, 20+BUFSIZE);
     if (tmp!=*checksum) {
-        std::cout<<"Corrupt! #"<<*seq<<"\n";
-        std::cout<<*checksum<<" vs "<<tmp<<"\n";
+        // std::cout<<"Corrupt! #"<<*seq<<"\n";
+        // std::cout<<*checksum<<" vs "<<tmp<<"\n";
         return -1;
     }
     short len;
@@ -152,13 +152,14 @@ int make_packet(byte *tcp_packet,int *seq,int *acknum,short *flag,short *checksu
 
 void receiver(){
     tcp_packet_r = new byte[20+BUFSIZE];
-    int recvlen,seq,acknum,n;
+    int recvlen,seq,acknum,n,len;
     short flag,checksum;
     while (1) {
         int n = read(newsockfd, tcp_packet_r , 20);
         if (n < 0)
             printf("ERROR reading from socket");
-        parse_packet(tcp_packet_r, &seq, &acknum, &flag, &checksum);
+        len = parse_packet(tcp_packet_r, &seq, &acknum, &flag, &checksum);
+        if(len==-1) continue;
         writelog(time(0), server, local, seq*BUFSIZE, seq*BUFSIZE+1, flag, rtt);
         //std::cout<<"receive ack "<<acknum<<"\n";
         //packet_fly -= acknum - window_base;
@@ -407,7 +408,7 @@ int main(int argc, char *argv[])
     }
     free(tcp_packet);
     free(tcp_packet_r);
-    
+
     string summary = "Transmission was successful!\nTotal bytes sent is "+std::to_string(totalbyte)+
     "\nNumber of sent segment is "+std::to_string(seq)+
     "\nNumber of retransmitted segment is  "+std::to_string(countretrans)+"\n";
