@@ -232,9 +232,14 @@ int main(int argc, char **argv)
     while(1){
         recvlen = recvfrom(fd, tcp_packet, 20+BUFSIZE, 0, (struct sockaddr *)&serv_addr, &addrlen);
         len = parse_packet(tcp_packet, &seq, &acknum, &flag, &checksum);
+        
         writelog(time(0), s_add, local, seq*BUFSIZE, seq*BUFSIZE+1, flag, -1);
         if (flag == END) {
             break;
+        }
+        if (len==-1)
+        {
+            continue;
         }
         if (seq==rcv_base) {
             totalbyte += 20+len;
