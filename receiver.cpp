@@ -256,6 +256,7 @@ int main(int argc, char **argv)
             for(int i = 0; i<ws; i++){
                 if (out_order_buf[i].first == target){
                     int len_t = parse_packet(out_order_buf[i].second, &hehe, &trash_int, &trash_short, &trash_short);
+                    std::cout<<"len is "<<len_t<<std::endl;
                     fwrite( (out_order_buf[i].second)+ 20, 1, len_t, ofs);
                     totalbyte += 20+len_t;
                     rcv_base++;
