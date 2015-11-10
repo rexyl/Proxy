@@ -215,8 +215,8 @@ int main(int argc, char **argv)
     read(sockfd, &ws, sizeof(int));
     read(sockfd, addtmp, 255);
     write(sockfd,s_add.c_str() , s_add.size() );
-    local = string(addtmp,strlen(addtmp));
-    string tmp = "local is "+local+"\n" + "server is "+s_add+" ";
+    //local = string(addtmp,strlen(addtmp));
+    local = "127.0.0.1";
     fwrite(tmp.c_str(), 1, tmp.size(), logfs);
     //////////
     std::vector<out_order_buffer_unit> out_order_buf;

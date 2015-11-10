@@ -332,7 +332,8 @@ int main(int argc, char *argv[])
     write(newsockfd, &ws ,sizeof(int));
     write(newsockfd, server.c_str(),sizeof(server));
     read(newsockfd, addtmp, 255);
-    local = string(addtmp,strlen(addtmp));
+    //local = string(addtmp,strlen(addtmp));
+    local = "127.0.0.1";
     ////////////////////////////
     sleep(1); //wait for receiver start recvfrom function
 
