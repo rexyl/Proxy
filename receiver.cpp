@@ -80,7 +80,7 @@ short ch_sum(byte* tcp_packet,int len){
     return checksum;
 }
 
-int parse_packet(byte *tcp_packet,int *seq,int *acknum,short *flag,short *checksum)
+short parse_packet(byte *tcp_packet,int *seq,int *acknum,short *flag,short *checksum)
 {
     
     memcpy( flag,tcp_packet+12, sizeof(short));
@@ -237,8 +237,7 @@ int main(int argc, char **argv)
         if (flag == END) {
             break;
         }
-        if (len==-1)
-        {
+        if (len==-1){
             continue;
         }
         else{
@@ -255,7 +254,7 @@ int main(int argc, char **argv)
                 rcv_base++;
                 for(int i = 0; i<ws; i++){
                     if (out_order_buf[i].first == target){
-                        int len_t = parse_packet(out_order_buf[i].second, &hehe, &trash_int, &trash_short, &trash_short);
+                        short len_t = parse_packet(out_order_buf[i].second, &hehe, &trash_int, &trash_short, &trash_short);
                         tmp = "len is "+std::to_string(len_t)+"\n";
                         fwrite(tmp.c_str(), 1, tmp.size(), logfs);
                         fwrite( (out_order_buf[i].second)+ 20, 1, len_t, ofs);

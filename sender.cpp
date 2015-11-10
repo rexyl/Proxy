@@ -106,7 +106,7 @@ short ch_sum(byte* tcp_packet,int len){
     return checksum;
 }
 
-int parse_packet(byte *tcp_packet,int *seq,int *acknum,short *flag,short *checksum)
+short parse_packet(byte *tcp_packet,int *seq,int *acknum,short *flag,short *checksum)
 {
     
     memcpy( flag,tcp_packet+12, sizeof(short));
@@ -152,7 +152,8 @@ int make_packet(byte *tcp_packet,int *seq,int *acknum,short *flag,short *checksu
 
 void receiver(){
     tcp_packet_r = new byte[20+BUFSIZE];
-    int recvlen,seq,acknum,n,len;
+    int recvlen,seq,acknum,n;
+    short len;
     short flag,checksum;
     while (1) {
         int n = read(newsockfd, tcp_packet_r , 20);
