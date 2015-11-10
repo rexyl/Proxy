@@ -246,6 +246,7 @@ int main(int argc, char **argv)
         }
         if (seq==rcv_base) {
             totalbyte += 20+len;
+            std::cout<<"len is "<<len<<std::endl;
             //std::cout<<"Write seq # "<<seq<<" with len = "<<len<<"\n";
             fwrite(tcp_packet+20, 1, len, ofs);
             
