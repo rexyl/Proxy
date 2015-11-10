@@ -402,17 +402,18 @@ int main(int argc, char *argv[])
             break;
         }
     }
+    for(int i=0; i<WINDOW_SIZE; i++){
+        free(resend_buffer_v[i].buffer);
+    }
+    free(tcp_packet);
+    free(tcp_packet_r);
+    
     string summary = "Transmission was successful!\nTotal bytes sent is "+std::to_string(totalbyte)+
     "\nNumber of sent segment is "+std::to_string(seq)+
     "\nNumber of retransmitted segment is  "+std::to_string(countretrans)+"\n";
     fwrite(summary.c_str(), 1, summary.size(), logfs);
     fclose(ifs);
     fclose(logfs);
-    //std::cout<<"File transfer finished\n";
-    for(int i=0; i<WINDOW_SIZE; i++){
-        free(resend_buffer_v[i].buffer);
-    }
-    free(tcp_packet);
-    free(tcp_packet_r);
+    
     return 0;
 }
