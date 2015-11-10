@@ -39,25 +39,29 @@ const std::string writelog(time_t now,string source, string dest, int seq,int ac
     while(lock){}
     lock=1;
     fwrite(buf, 1,strlen(buf), logfs);
-    fwrite(" ", 1, 1, logfs);
-    fwrite(source.c_str(), 1, source.size(), logfs);
-    fwrite(" ", 1, 1, logfs);
-    fwrite(dest.c_str(), 1, dest.size(), logfs);
-    fwrite(" ", 1, 1, logfs);
-    string tmp = std::to_string(seq).c_str();
-    fwrite(tmp.c_str(), 1, tmp.size(), logfs);
-    fwrite(" ", 1, 1, logfs);
-    tmp = std::to_string(ack).c_str();
-    fwrite(tmp.c_str(), 1, tmp.size(), logfs);
-    fwrite(" ", 1, 1, logfs);
-    tmp = std::to_string(flag).c_str();
-    fwrite(tmp.c_str(), 1, tmp.size(), logfs);
-    fwrite(" ", 1, 1, logfs);
+    string tmp;
+    tmp = " "+source+" "+dest+" "+std::to_string(seq)+ " "+ std::to_string(ack)
+            +" "+std::to_string(flag)+" ";
+    // fwrite(" ", 1, 1, logfs);
+    // fwrite(source.c_str(), 1, source.size(), logfs);
+    // fwrite(" ", 1, 1, logfs);
+    // fwrite(dest.c_str(), 1, dest.size(), logfs);
+    // fwrite(" ", 1, 1, logfs);
+    // string tmp = std::to_string(seq).c_str();
+    // fwrite(tmp.c_str(), 1, tmp.size(), logfs);
+    // fwrite(" ", 1, 1, logfs);
+    // tmp = std::to_string(ack).c_str();
+    // fwrite(tmp.c_str(), 1, tmp.size(), logfs);
+    // fwrite(" ", 1, 1, logfs);
+    // tmp = std::to_string(flag).c_str();
+    // fwrite(tmp.c_str(), 1, tmp.size(), logfs);
+    // fwrite(" ", 1, 1, logfs);
     if (rtt>=0) {
-        tmp = std::to_string(rtt).c_str();
-        fwrite(tmp.c_str(), 1, tmp.size(), logfs);
+        tmp += std::to_string(rtt);
+        //fwrite(tmp.c_str(), 1, tmp.size(), logfs);
     }
-    fwrite(enter.c_str(), 1, enter.size(), logfs);
+    tmp += "\n";
+    fwrite(tmp.c_str(), 1, tmp.size(), logfs);
     lock=0;
     return buf;
 }
