@@ -96,8 +96,8 @@ int parse_packet(byte *tcp_packet,int *seq,int *acknum,short *flag,short *checks
     memset(tcp_packet+16, 0, sizeof(short));
     tmp = ch_sum(tcp_packet, 20+BUFSIZE);
     if (tmp!=*checksum) {
-        std::cout<<"Corrupt! #"<<*seq<<"\n";
-        std::cout<<*checksum<<" vs "<<tmp<<"\n";
+        // std::cout<<"Corrupt! #"<<*seq<<"\n";
+        // std::cout<<*checksum<<" vs "<<tmp<<"\n";
         return -1;
     }
     short len;
@@ -246,7 +246,7 @@ int main(int argc, char **argv)
         }
         if (seq==rcv_base) {
             totalbyte += 20+len;
-            std::cout<<"len is "<<len<<std::endl;
+            std::cout<<"len is "<<len<<"\n";
             //std::cout<<"Write seq # "<<seq<<" with len = "<<len<<"\n";
             fwrite(tcp_packet+20, 1, len, ofs);
             
@@ -256,7 +256,7 @@ int main(int argc, char **argv)
             for(int i = 0; i<ws; i++){
                 if (out_order_buf[i].first == target){
                     int len_t = parse_packet(out_order_buf[i].second, &hehe, &trash_int, &trash_short, &trash_short);
-                    std::cout<<"len is "<<len_t<<std::endl;
+                    std::cout<<"len is "<<len_t<<"\n";
                     fwrite( (out_order_buf[i].second)+ 20, 1, len_t, ofs);
                     totalbyte += 20+len_t;
                     rcv_base++;
