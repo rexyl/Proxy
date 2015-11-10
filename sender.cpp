@@ -126,6 +126,7 @@ short parse_packet(byte *tcp_packet,int *seq,int *acknum,short *flag,short *chec
         // std::cout<<*checksum<<" vs "<<tmp<<"\n";
         return -1;
     }
+    memcpy(tcp_packet+16,checksum,sizeof(short)); //recover checksum part
     short len;
     memcpy(&len ,tcp_packet+18, sizeof(short));
     return len;
