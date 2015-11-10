@@ -39,20 +39,20 @@ const std::string writelog(time_t now,string source, string dest, int seq,int ac
     while(lock){}
     lock=1;
     fwrite(buf, 1,strlen(buf), logfs);
-    fwrite(blank.c_str(), 1, blank.size(), logfs);
+    fwrite(" ", 1, 1, logfs);
     fwrite(source.c_str(), 1, source.size(), logfs);
-    fwrite(blank.c_str(), 1, blank.size(), logfs);
-    fwrite(dest.c_str(), 1, source.size(), logfs);
-    fwrite(blank.c_str(), 1, blank.size(), logfs);
+    fwrite(" ", 1, 1, logfs);
+    fwrite(dest.c_str(), 1, dest.size(), logfs);
+    fwrite(" ", 1, 1, logfs);
     string tmp = std::to_string(seq).c_str();
     fwrite(tmp.c_str(), 1, tmp.size(), logfs);
-    fwrite(blank.c_str(), 1, blank.size(), logfs);
+    fwrite(" ", 1, 1, logfs);
     tmp = std::to_string(ack).c_str();
     fwrite(tmp.c_str(), 1, tmp.size(), logfs);
-    fwrite(blank.c_str(), 1, blank.size(), logfs);
+    fwrite(" ", 1, 1, logfs);
     tmp = std::to_string(flag).c_str();
     fwrite(tmp.c_str(), 1, tmp.size(), logfs);
-    fwrite(blank.c_str(), 1, blank.size(), logfs);
+    fwrite(" ", 1, 1, logfs);
     if (rtt>=0) {
         tmp = std::to_string(rtt).c_str();
         fwrite(tmp.c_str(), 1, tmp.size(), logfs);
@@ -96,10 +96,11 @@ short parse_packet(byte *tcp_packet,int *seq,int *acknum,short *flag,short *chec
     memset(tcp_packet+16, 0, sizeof(short));
     tmp = ch_sum(tcp_packet, 20+BUFSIZE);
     if (tmp!=*checksum) {
-        // std::cout<<"Corrupt! #"<<*seq<<"\n";
-        // std::cout<<*checksum<<" vs "<<tmp<<"\n";
+        std::cout<<"Corrupt! #"<<*seq<<"\n";
+        std::cout<<*checksum<<" vs "<<tmp<<"\n";
         return -1;
     }
+    memcpy(tcp_packet+16,checksum,sizeof(short)); //recover checksum part
     short len;
     memcpy(&len ,tcp_packet+18, sizeof(short));
     return len;
@@ -255,7 +256,7 @@ int main(int argc, char **argv)
                 for(int i = 0; i<ws; i++){
                     if (out_order_buf[i].first == target){
                         short len_t = parse_packet(out_order_buf[i].second, &hehe, &trash_int, &trash_short, &trash_short);
-                        tmp = "len is "+std::to_string(len_t)+"\n";
+                        tmp = "len_t is "+std::to_string(len_t)+"\n";
                         fwrite(tmp.c_str(), 1, tmp.size(), logfs);
                         fwrite( (out_order_buf[i].second)+ 20, 1, len_t, ofs);
                         totalbyte += 20+len_t;
