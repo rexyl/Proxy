@@ -241,58 +241,60 @@ int main(int argc, char **argv)
         {
             continue;
         }
-        if (seq==rcv_base) {
-            totalbyte += 20+len;
-            string tmp = "len is "+std::to_string(len)+"\n";
-            fwrite(tmp.c_str(), 1, tmp.size(), logfs);
-            //std::cout<<"len is "<<len<<"\n";
-            //std::cout<<"Write seq # "<<seq<<" with len = "<<len<<"\n";
-            fwrite(tcp_packet+20, 1, len, ofs);
-            
-            //greedy check buffer
-            int target = seq+1;
-            rcv_base++;
-            for(int i = 0; i<ws; i++){
-                if (out_order_buf[i].first == target){
-                    int len_t = parse_packet(out_order_buf[i].second, &hehe, &trash_int, &trash_short, &trash_short);
-                    tmp = "len is "+std::to_string(len_t)+"\n";
-                    fwrite(tmp.c_str(), 1, tmp.size(), logfs);
-                    fwrite( (out_order_buf[i].second)+ 20, 1, len_t, ofs);
-                    totalbyte += 20+len_t;
-                    rcv_base++;
-                    target++;
-                    out_order_buf[i].first = -1;
+        else{
+            if (seq==rcv_base) {
+                totalbyte += 20+len;
+                string tmp = "len is "+std::to_string(len)+"\n";
+                fwrite(tmp.c_str(), 1, tmp.size(), logfs);
+                //std::cout<<"len is "<<len<<"\n";
+                //std::cout<<"Write seq # "<<seq<<" with len = "<<len<<"\n";
+                fwrite(tcp_packet+20, 1, len, ofs);
+                
+                //greedy check buffer
+                int target = seq+1;
+                rcv_base++;
+                for(int i = 0; i<ws; i++){
+                    if (out_order_buf[i].first == target){
+                        int len_t = parse_packet(out_order_buf[i].second, &hehe, &trash_int, &trash_short, &trash_short);
+                        tmp = "len is "+std::to_string(len_t)+"\n";
+                        fwrite(tmp.c_str(), 1, tmp.size(), logfs);
+                        fwrite( (out_order_buf[i].second)+ 20, 1, len_t, ofs);
+                        totalbyte += 20+len_t;
+                        rcv_base++;
+                        target++;
+                        out_order_buf[i].first = -1;
+                    }
                 }
+                acknum = seq+1;
+                flag = ACK;
+                
+                make_packet(tcp_packet, &seq, &acknum, &flag, &checksum, ofs);
+                n = write(sockfd, tcp_packet, 20);
+                if (n < 0)
+                    printf("ERROR writing to socket");
+                writelog(time(0), local, s_add, seq*BUFSIZE, seq*BUFSIZE+1, flag, -1);
+                
             }
-            acknum = seq+1;
-            flag = ACK;
-            
-            make_packet(tcp_packet, &seq, &acknum, &flag, &checksum, ofs);
-            n = write(sockfd, tcp_packet, 20);
-            if (n < 0)
-                printf("ERROR writing to socket");
-            writelog(time(0), local, s_add, seq*BUFSIZE, seq*BUFSIZE+1, flag, -1);
-            
-        }
-        else  //out of order, buffer it
-        {
-            for(int i = 0; i<ws; i++){
-                if (out_order_buf[i].first == -1){
-                    memcpy(out_order_buf[i].second, tcp_packet, 20+BUFSIZE);
-                    out_order_buf[i].first = seq;
-                    sort(out_order_buf.begin(),out_order_buf.end());
-                    break;
+            else  //out of order, buffer it
+            {
+                for(int i = 0; i<ws; i++){
+                    if (out_order_buf[i].first == -1){
+                        memcpy(out_order_buf[i].second, tcp_packet, 20+BUFSIZE);
+                        out_order_buf[i].first = seq;
+                        sort(out_order_buf.begin(),out_order_buf.end());
+                        break;
+                    }
                 }
+                
+                acknum = seq + 1;
+                flag = ACK;
+                checksum = 0;
+                make_packet(tcp_packet, &seq, &acknum, &flag, &checksum, ofs);
+                n = write(sockfd, tcp_packet, 20);
+                if (n < 0)
+                    printf("ERROR writing to socket");
+                writelog(time(0), local, s_add, seq*BUFSIZE, seq*BUFSIZE+1, flag, -1);
             }
-            
-            acknum = seq + 1;
-            flag = ACK;
-            checksum = 0;
-            make_packet(tcp_packet, &seq, &acknum, &flag, &checksum, ofs);
-            n = write(sockfd, tcp_packet, 20);
-            if (n < 0)
-                printf("ERROR writing to socket");
-            writelog(time(0), local, s_add, seq*BUFSIZE, seq*BUFSIZE+1, flag, -1);
         }
         //printf("seq is %d\n",seq);
     }
