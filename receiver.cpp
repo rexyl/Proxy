@@ -248,8 +248,8 @@ int main(int argc, char **argv)
         else{
             if (seq==rcv_base) {
                 totalbyte += 20+len;
-                string tmp = "len is "+std::to_string(len)+"\n";
-                fwrite(tmp.c_str(), 1, tmp.size(), logfs);
+                //string tmp = "len is "+std::to_string(len)+"\n";
+                //fwrite(tmp.c_str(), 1, tmp.size(), logfs);
                 //std::cout<<"len is "<<len<<"\n";
                 //std::cout<<"Write seq # "<<seq<<" with len = "<<len<<"\n";
                 fwrite(tcp_packet+20, 1, len, ofs);
@@ -260,8 +260,8 @@ int main(int argc, char **argv)
                 for(int i = 0; i<ws; i++){
                     if (out_order_buf[i].first == target){
                         short len_t = parse_packet(out_order_buf[i].second, &hehe, &trash_int, &trash_short, &trash_short);
-                        tmp = "len_t is "+std::to_string(len_t)+"\n";
-                        fwrite(tmp.c_str(), 1, tmp.size(), logfs);
+                        //tmp = "len_t is "+std::to_string(len_t)+"\n";
+                        //fwrite(tmp.c_str(), 1, tmp.size(), logfs);
                         fwrite( (out_order_buf[i].second)+ 20, 1, len_t, ofs);
                         totalbyte += 20+len_t;
                         rcv_base++;
