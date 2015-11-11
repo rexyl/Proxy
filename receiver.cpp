@@ -100,8 +100,8 @@ short parse_packet(byte *tcp_packet,int *seq,int *acknum,short *flag,short *chec
     memset(tcp_packet+16, 0, sizeof(short));
     tmp = ch_sum(tcp_packet, 20+BUFSIZE);
     if (tmp!=*checksum) {
-        std::cout<<"Corrupt! #"<<*seq<<"\n";
-        std::cout<<*checksum<<" vs "<<tmp<<"\n";
+        // std::cout<<"Corrupt! #"<<*seq<<"\n";
+        // std::cout<<*checksum<<" vs "<<tmp<<"\n";
         return -1;
     }
     memcpy(tcp_packet+16,checksum,sizeof(short)); //recover checksum part
